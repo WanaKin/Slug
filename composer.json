@@ -1,0 +1,32 @@
+{
+    "name": "wanakin/slug",
+    "description": "A simple slug service for Laravel.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "WanaKin",
+            "email": "opensource@wanakin.com"
+        }
+    ],
+    "extra": {
+	"laravel": {
+	    "providers": [
+		"WanaKin\\Slug\\SlugServiceProvider"
+	    ]
+	}
+    },
+    "autoload": {
+	"psr-4": {
+	    "WanaKin\\Slug\\": "src/"
+	}
+    },
+    "autoload-dev": {
+	"psr-4": {
+	    "Tests\\": "tests/"
+	}
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.7",
+        "phpunit/phpunit": "^9.5"
+    }
+}
