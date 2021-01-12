@@ -98,4 +98,113 @@ class SlugServiceTest extends FeatureTestCase {
         // Assert the correct post was returned
         $this->assertEquals( $model->id, $resolved->id );
     }
+
+    /**
+     * Test removing a slug
+     *
+     * @return void
+     */
+    public function testDelete() {
+        $model = $this->createSluggable();
+
+        // Create a slug
+        $slugStr = 'YOLO';
+        $slug = $model->slug()->create( [
+            'slug' => $slugStr
+        ] );
+
+        // Delete by slug
+        SlugService::delete( $slugStr );
+        $this->assertSoftDeleted( 'slugs', [
+            'sluggable_type' => $model::class,
+            'sluggable_id' => $model->id,
+            'slug' => $slugStr
+        ] );
+
+        // Delete by model
+        $slug->restore();
+
+        SlugService::delete( $model );
+        $this->assertSoftDeleted( 'slugs', [
+            'sluggable_type' => $model::class,
+            'sluggable_id' => $model->id,
+            'slug' => $slugStr
+        ] );
+    }
+
+    /**
+     * Test force deleting
+     *
+     * @return void
+     */
+    public function testForceDelete() {
+        // Create a user
+        $model = $this->createSluggable();
+
+        // Create a slug
+        $slugStr = 'YOLO';
+        $slug = $model->slug()->create( [
+            'slug' => $slugStr
+        ] );
+
+        // Force delete
+        SlugService::delete( $model, TRUE );
+        $this->assertDeleted( 'slugs', [
+            'sluggable_type' => $model::class,
+            'sluggable_id' => $model->id,
+            'slug' => $slugStr
+        ] );
+    }
+
+    /**
+     * Test retrieving a deleted slug
+     *
+     * @return void
+     */
+    public function testDeleteThenGet() {
+        // Create a user and slug
+        $model = $this->createSluggable();
+        $slugStr = 'YOLO';
+        $slug = $model->slug()->create( [
+            'slug' => $slugStr
+        ] );
+
+        // Soft delete the slug
+        $slug->delete();
+
+        // Call get without any parameters
+        $this->assertEquals( $slugStr, SlugService::get( $model ) );
+
+        // Soft delete again and restore with a default
+        $slug->delete();
+
+        SlugService::get( $model, 'cats', FALSE );
+
+        // Assert the slug was updated
+        $this->assertDatabaseHas( 'slugs', [
+            'sluggable_type' => $model::class,
+            'sluggable_id' => $model->id,
+            'slug' => 'cats'
+        ] );
+    }
+
+    /**
+     * Test resolving a deleted slug
+     *
+     * @return void
+     */
+    public function testDeleteThenResolve() {
+        // Create a user and slug
+        $model = $this->createSluggable();
+        $slugStr = 'YOLO';
+        $slug = $model->slug()->create( [
+            'slug' => $slugStr
+        ] );
+
+        // Soft delete the slug
+        $slug->delete();
+
+        // Attempt to resolve
+        $this->assertEmpty( SlugService::resolve( $slugStr ) );
+    }
 }

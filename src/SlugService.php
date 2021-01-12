@@ -31,10 +31,26 @@ class SlugService {
                 $slug = Str::uuid();
             }
 
-            // Create a new slug record
-            $model->slug()->create( [
-                'slug' => $slug
-            ] );
+            // Restore the slug if deleted
+            if ( $model->slug()->withTrashed()->first() ) {
+                $model->slug()->restore();
+
+                // Update to the default value if set
+                if ( $default ) {
+                    $model->slug()->update( [
+                        'slug' => $slug
+                    ] );
+                }
+
+                // Update the slug
+                $model->load( 'slug' );
+                $slug = $model->slug->slug;
+            } else {
+                // Create a new slug record
+                $model->slug()->create( [
+                    'slug' => $slug
+                ] );
+            }
 
             return $slug;
         }
@@ -53,6 +69,27 @@ class SlugService {
             return $slug->sluggable;
         } else {
             return NULL;
+        }
+    }
+
+    /**
+     * Delete a slug for a model or string
+     *
+     * @param string|Model $model
+     * @pararm bool $forceDelete = FALSE
+     * @return void
+     */
+    public function delete( $model, bool $forceDelete = FALSE ) : void {
+        // If the model is a string, resolve to a Slug
+        if ( is_string( $model ) ) {
+            $slug = Slug::where( 'slug', $model )->first();
+        } else if ( $model instanceof Model ) {
+            $slug = $model->slug;
+        }
+
+        // If the slug was found, delete it
+        if ( $slug ) {
+            $forceDelete ? $slug->forceDelete() : $slug->delete();
         }
     }
 }

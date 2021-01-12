@@ -2,7 +2,7 @@
 namespace Wanakin\Slug;
 
 use WanaKin\Slug\Facades\SlugService;
-use WanaKin\Slug\Models\Slug;
+use WanaKin\Slug\Slug;
 use Illuminate\Database\Eloquent\Model;
 
 trait Sluggable {

@@ -14,7 +14,7 @@ class CreateSlugsTable extends Migration {
             $table->id();
             $table->morphs( 'sluggable' );
             $table->string( 'slug' )->unique();
-            $table->timestamps();
+            $table->softDeletes();
         } );
     }
 

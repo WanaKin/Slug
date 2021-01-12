@@ -36,3 +36,19 @@ Although you shouldn't have to do this manually, you can pass a string to the `r
 ```php
 $model = SlugService::resolve( 'hello-world' );
 ```
+
+#### Deleting
+In order to delete a slug, use the `delete` method. This method works with either a slug string or slugged model:
+
+```php
+SlugService::delete( 'hello-world' );
+SlugService::delete( $model ); // This will only delete the slug, not the model itself!
+```
+
+This will soft delete the slug. If `resolve` is called on the slug, it will return `NULL` which will throw a 404 if used for model binding. However, if `get` is called on the model, the slug will be restored (or updated to the passed default value). If you'd like to permanently delete a slug, pass a boolean `TRUE` as the second argument:
+
+```php
+SlugService::delete( 'hello-world', TRUE );
+```
+
+If `get` is called again, a new slug will be generated.
