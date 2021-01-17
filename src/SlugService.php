@@ -7,6 +7,17 @@ use Illuminate\Support\Str;
 
 class SlugService {
     /**
+     * Generate a random string
+     *
+     * @param int $size
+     * @return string
+     */
+    private function random( int $size ) : string {
+        // Get a more URL-friendly string than Str::random()
+        return bin2hex( random_bytes( $size / 2 ) );
+    }
+    
+    /**
      * Get the slug for a model
      *
      * @param Model $model
@@ -26,7 +37,7 @@ class SlugService {
             if ( $default ) {
                 $slug = $default;
                 // If safety is enabled, add a random string to reduce the chance of a collision
-                $slug .= $safety ? '-' . Str::random( 8 ) : NULL;
+                $slug .= $safety ? '-' . $this->random( 8 ) : NULL;
             } else {
                 $slug = Str::uuid();
             }

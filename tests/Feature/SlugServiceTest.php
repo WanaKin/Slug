@@ -43,6 +43,9 @@ class SlugServiceTest extends FeatureTestCase {
 
         // Assert the correct slug was returned
         $slug = SlugService::get( $model, $slugBase );
+
+        // The length should be the slug base plus a dash, plus 8 characters
+        $this->assertEquals( strlen( $slugBase ) + 1 + 8, strlen( $slug ) );
         $this->assertEquals( $slugBase, substr( $slug, 0, strlen( $slugBase ) ) );
 
         // Assert the datatbase was updated
