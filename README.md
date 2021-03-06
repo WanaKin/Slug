@@ -6,7 +6,7 @@ This package provides a simple slug service for Laravel, which makes it easy to 
 Before you can use the service with a model, you'll need to add the `WanaKin\Slug\Sluggable` trait to it. This defines the `sluggable` relationship, as well as a `resolveRouteBinding` method which will bind the models according to the slug. You don't need to make any modifications to your model's database table.
 
 ### Service
-This package comes with both a `WanaKin\Slug\SlugService` service as well as a facade (`WanaKin\Slug\SlugService`). Use the former if you'd like to use dependency injection or the latter otherwise.
+This package comes with both a `WanaKin\Slug\SlugService` service as well as a facade (`WanaKin\Slug\Facades\SlugService`). Use the former if you'd like to use dependency injection or the latter otherwise.
 
 #### Creating/Retrieving A Slug
 In order to create or get a slug for a model, use the `get` method:
