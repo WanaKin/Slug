@@ -4,7 +4,8 @@ namespace Tests\Fixtures;
 use Illuminate\Foundation\Auth\User as Model;
 use WanaKin\Slug\Sluggable;
 
-class User extends Model {
+class User extends Model
+{
     use Sluggable;
 
     /**

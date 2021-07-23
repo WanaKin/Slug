@@ -5,29 +5,31 @@ use WanaKin\Slug\Facades\SlugService;
 use Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\WithFaker;
 
-class SlugServiceTest extends FeatureTestCase {
+class SlugServiceTest extends FeatureTestCase
+{
     use WithFaker;
-    
+
     /**
      * Test creating a slug for a post
      *
      * @return void
      */
-    public function testGet() {
+    public function test_get_slug_for_model()
+    {
         $model = $this->createSluggable();
-        
+
         // Test creating a slug for a model
-        $slug = SlugService::get( $model );
+        $slug = SlugService::get($model);
 
         // Assert the database was updated
-        $this->assertDatabaseHas( 'slugs', [
+        $this->assertDatabaseHas('slugs', [
             'sluggable_type' => $model::class,
             'sluggable_id' => $model->id,
             'slug' => $slug
-        ] );
+        ]);
 
         // Assert that the next request returns the same slug
-        $this->assertEquals( $slug, SlugService::get( $model ) );
+        $this->assertEquals($slug, SlugService::get($model));
     }
 
     /**
@@ -35,25 +37,26 @@ class SlugServiceTest extends FeatureTestCase {
      *
      * @return void
      */
-    public function testGetWithDefault() {
-        $model = $this->createSluggable();;
-        
+    public function test_get_slug_for_model_with_default()
+    {
+        $model = $this->createSluggable();
+
         // Test creating a slug for a post with a default
         $slugBase = $this->faker->word;
 
         // Assert the correct slug was returned
-        $slug = SlugService::get( $model, $slugBase );
+        $slug = SlugService::get($model, $slugBase);
 
         // The length should be the slug base plus a dash, plus 8 characters
-        $this->assertEquals( strlen( $slugBase ) + 1 + 8, strlen( $slug ) );
-        $this->assertEquals( $slugBase, substr( $slug, 0, strlen( $slugBase ) ) );
+        $this->assertEquals(strlen($slugBase) + 1 + 8, strlen($slug));
+        $this->assertEquals($slugBase, substr($slug, 0, strlen($slugBase)));
 
         // Assert the datatbase was updated
-        $this->assertDatabaseHas( 'slugs', [
+        $this->assertDatabaseHas('slugs', [
             'sluggable_type' => $model::class,
             'sluggable_id' => $model->id,
             'slug' => $slug
-        ] );
+        ]);
     }
 
     /**
@@ -61,21 +64,22 @@ class SlugServiceTest extends FeatureTestCase {
      *
      * @return void
      */
-    public function testGetWithDefaultAndNoSafety() {
+    public function test_create_slug_for_model_with_default_and_no_safety()
+    {
         $model = $this->createSluggable();
-        
+
         // Test creating a slug for a post with a default
         $slug = $this->faker->word;
 
         // Assert the correct slug was returned
-        $this->assertEquals( $slug, SlugService::get( $model, $slug, FALSE ) );
+        $this->assertEquals($slug, SlugService::get($model, $slug, FALSE));
 
         // Assert the datatbase was updated
-        $this->assertDatabaseHas( 'slugs', [
+        $this->assertDatabaseHas('slugs', [
             'sluggable_type' => $model::class,
             'sluggable_id' => $model->id,
             'slug' => $slug
-        ] );
+        ]);
     }
 
     /**
@@ -83,23 +87,24 @@ class SlugServiceTest extends FeatureTestCase {
      *
      * @return void
      */
-    public function testResolve() {
+    public function test_resolve_slug_to_model()
+    {
         $model = $this->createSluggable();
-        
+
         // Create a slug
         $slug = 'YOLO';
-        $model->slug()->create( [
+        $model->slug()->create([
             'slug' => $slug
-        ] );
+        ]);
 
         // Resolve the slug
-        $resolved = SlugService::resolve( $slug );
+        $resolved = SlugService::resolve($slug);
 
         // Assert a post was returned
-        $this->assertInstanceOf( $model::class, $resolved );
+        $this->assertInstanceOf($model::class, $resolved);
 
         // Assert the correct post was returned
-        $this->assertEquals( $model->id, $resolved->id );
+        $this->assertEquals($model->id, $resolved->id);
     }
 
     /**
@@ -107,32 +112,33 @@ class SlugServiceTest extends FeatureTestCase {
      *
      * @return void
      */
-    public function testDelete() {
+    public function test_delete_slug()
+    {
         $model = $this->createSluggable();
 
         // Create a slug
         $slugStr = 'YOLO';
-        $slug = $model->slug()->create( [
+        $slug = $model->slug()->create([
             'slug' => $slugStr
-        ] );
+        ]);
 
         // Delete by slug
-        SlugService::delete( $slugStr );
-        $this->assertSoftDeleted( 'slugs', [
+        SlugService::delete($slugStr);
+        $this->assertSoftDeleted('slugs', [
             'sluggable_type' => $model::class,
             'sluggable_id' => $model->id,
             'slug' => $slugStr
-        ] );
+        ]);
 
         // Delete by model
         $slug->restore();
 
-        SlugService::delete( $model );
-        $this->assertSoftDeleted( 'slugs', [
+        SlugService::delete($model);
+        $this->assertSoftDeleted('slugs', [
             'sluggable_type' => $model::class,
             'sluggable_id' => $model->id,
             'slug' => $slugStr
-        ] );
+        ]);
     }
 
     /**
@@ -140,23 +146,24 @@ class SlugServiceTest extends FeatureTestCase {
      *
      * @return void
      */
-    public function testForceDelete() {
+    public function test_force_delete_slug()
+    {
         // Create a user
         $model = $this->createSluggable();
 
         // Create a slug
         $slugStr = 'YOLO';
-        $slug = $model->slug()->create( [
+        $slug = $model->slug()->create([
             'slug' => $slugStr
-        ] );
+        ]);
 
         // Force delete
-        SlugService::delete( $model, TRUE );
-        $this->assertDeleted( 'slugs', [
+        SlugService::delete($model, true);
+        $this->assertDeleted('slugs', [
             'sluggable_type' => $model::class,
             'sluggable_id' => $model->id,
             'slug' => $slugStr
-        ] );
+        ]);
     }
 
     /**
@@ -164,31 +171,32 @@ class SlugServiceTest extends FeatureTestCase {
      *
      * @return void
      */
-    public function testDeleteThenGet() {
+    public function test_get_deleted_slug()
+    {
         // Create a user and slug
         $model = $this->createSluggable();
         $slugStr = 'YOLO';
-        $slug = $model->slug()->create( [
+        $slug = $model->slug()->create([
             'slug' => $slugStr
-        ] );
+        ]);
 
         // Soft delete the slug
         $slug->delete();
 
         // Call get without any parameters
-        $this->assertEquals( $slugStr, SlugService::get( $model ) );
+        $this->assertEquals($slugStr, SlugService::get($model));
 
         // Soft delete again and restore with a default
         $slug->delete();
 
-        SlugService::get( $model, 'cats', FALSE );
+        SlugService::get($model, 'cats', false);
 
         // Assert the slug was updated
-        $this->assertDatabaseHas( 'slugs', [
+        $this->assertDatabaseHas('slugs', [
             'sluggable_type' => $model::class,
             'sluggable_id' => $model->id,
             'slug' => 'cats'
-        ] );
+        ]);
     }
 
     /**
@@ -196,18 +204,19 @@ class SlugServiceTest extends FeatureTestCase {
      *
      * @return void
      */
-    public function testDeleteThenResolve() {
+    public function test_resolve_deleted_slug()
+    {
         // Create a user and slug
         $model = $this->createSluggable();
         $slugStr = 'YOLO';
-        $slug = $model->slug()->create( [
+        $slug = $model->slug()->create([
             'slug' => $slugStr
-        ] );
+        ]);
 
         // Soft delete the slug
         $slug->delete();
 
         // Attempt to resolve
-        $this->assertEmpty( SlugService::resolve( $slugStr ) );
+        $this->assertEmpty(SlugService::resolve($slugStr));
     }
 }

@@ -2,6 +2,7 @@
     "name": "wanakin/slug",
     "description": "A simple slug service for Laravel.",
     "license": "MIT",
+    "version": "0.0.2",
     "authors": [
         {
             "name": "WanaKin",
@@ -9,21 +10,21 @@
         }
     ],
     "extra": {
-	"laravel": {
-	    "providers": [
-		"WanaKin\\Slug\\SlugServiceProvider"
-	    ]
-	}
+	      "laravel": {
+	          "providers": [
+		            "WanaKin\\Slug\\SlugServiceProvider"
+	          ]
+	      }
     },
     "autoload": {
-	"psr-4": {
-	    "WanaKin\\Slug\\": "src/"
-	}
+	      "psr-4": {
+	          "WanaKin\\Slug\\": "src/"
+	      }
     },
     "autoload-dev": {
-	"psr-4": {
-	    "Tests\\": "tests/"
-	}
+	      "psr-4": {
+	          "Tests\\": "tests/"
+	      }
     },
     "require-dev": {
         "orchestra/testbench": "^6.7",

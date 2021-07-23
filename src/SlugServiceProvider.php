@@ -9,7 +9,9 @@ class SlugServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    public function register() {
+    public function register()
+    {
+        //
     }
 
     /**
@@ -17,13 +19,14 @@ class SlugServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    public function boot() {
-        // Compatibility
-        if ( !class_exists( '\\WanaKin\\Slug\\Models\\Slug' ) ) {
-            class_alias( '\\WanaKin\\Slug\\Slug', '\\WanaKin\\Slug\\Models\\Slug' );
+    public function boot()
+    {
+        // Backwards compatibility
+        if (!class_exists('\\WanaKin\\Slug\\Models\\Slug')) {
+            class_alias('\\WanaKin\\Slug\\Slug', '\\WanaKin\\Slug\\Models\\Slug');
         }
-        
+
         // Load migrations
-        $this->loadMigrationsFrom( __DIR__ . '/../database/migrations' );
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 }
